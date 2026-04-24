@@ -9,11 +9,16 @@ export function createApp(dbPath?: string): express.Express {
   const db = openDb(dbPath);
   app.locals.db = db;
 
-  app.use(
-    cors({
-      origin: process.env.CORS_ORIGIN?.split(",").map((s) => s.trim()) ?? "*",
-    })
-  );
+  // CORS_ORIGIN:
+  //   unset or "*"  -> allow all (good for curl + easy testing)
+  //   "a,b,c"       -> allow-list of origins (split, trim, array)
+  const raw = process.env.CORS_ORIGIN?.trim();
+  const corsOrigin: string | string[] =
+    !raw || raw === "*"
+      ? "*"
+      : raw.split(",").map((s) => s.trim()).filter(Boolean);
+
+  app.use(cors({ origin: corsOrigin }));
   app.use(express.json({ limit: "10kb" }));
 
   app.get("/", (_req, res) => {
