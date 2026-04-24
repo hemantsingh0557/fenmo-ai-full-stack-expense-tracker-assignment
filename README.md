@@ -10,9 +10,11 @@ Built as a take-home assignment, but written like something you might maintain f
 
 | | URL |
 |---|---|
-| Frontend | _filled in after deploy_ |
-| Backend  | _filled in after deploy_ |
+| Frontend | https://fenmo-ai-full-stack-expense-tracker.vercel.app |
+| Backend  | https://fenmo-ai-expense-tracker-api.onrender.com |
 | Repo     | https://github.com/hemantsingh0557/fenmo-ai-full-stack-expense-tracker-assignment |
+
+> **Heads-up — Render free tier:** the backend sleeps after ~15 min idle. First request after sleep may take 40–60 seconds to cold-start. Later requests are instant.
 
 ---
 
@@ -123,7 +125,23 @@ All responses are JSON. All error responses use the [shape below](#error-shape).
 
 ---
 
-### `GET /health`
+### `GET /`
+
+Friendly root — useful for sanity-checking the bare backend URL in a browser.
+
+**Response `200`**
+
+```json
+{
+  "status": "working",
+  "service": "expense-tracker-api",
+  "endpoints": ["/api/health", "/api/expenses"]
+}
+```
+
+---
+
+### `GET /api/health`
 
 Liveness probe for the deploy platform.
 
@@ -135,7 +153,7 @@ Liveness probe for the deploy platform.
 
 ---
 
-### `POST /expenses`
+### `POST /api/expenses`
 
 Create a new expense.
 
@@ -158,7 +176,7 @@ Create a new expense.
 **Example request**
 
 ```http
-POST /expenses HTTP/1.1
+POST /api/expenses HTTP/1.1
 Content-Type: application/json
 Idempotency-Key: 89c5b3d7-9b4f-4a40-9b1e-2a1e9b4f3d0c
 
@@ -197,7 +215,7 @@ Money-specific failures return the same shape with `fields.amount`.
 
 ---
 
-### `GET /expenses`
+### `GET /api/expenses`
 
 List expenses. Supports filtering by category and sorting by date.
 
@@ -211,7 +229,7 @@ List expenses. Supports filtering by category and sorting by date.
 **Example**
 
 ```http
-GET /expenses?category=Food&sort=date_desc
+GET /api/expenses?category=Food&sort=date_desc
 ```
 
 **Response `200`**

@@ -1,6 +1,10 @@
 import type { Category } from "./schemas";
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? "http://localhost:4000";
+const ROOT = (import.meta.env.VITE_API_BASE ?? "http://localhost:4000").replace(
+  /\/$/,
+  ""
+);
+const API_BASE = `${ROOT}/api`;
 
 export type Expense = {
   id: string;

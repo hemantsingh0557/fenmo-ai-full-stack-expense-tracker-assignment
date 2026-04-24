@@ -20,15 +20,15 @@ export function createApp(dbPath?: string): express.Express {
     res.json({
       status: "working",
       service: "expense-tracker-api",
-      endpoints: ["/health", "/api/health", "/expenses"],
+      endpoints: ["/api/health", "/api/expenses"],
     });
   });
 
-  app.get(["/health", "/api/health"], (_req, res) => {
+  app.get("/api/health", (_req, res) => {
     res.json({ ok: true });
   });
 
-  app.use(expensesRouter());
+  app.use("/api", expensesRouter());
 
   app.use(errorHandler);
   return app;
