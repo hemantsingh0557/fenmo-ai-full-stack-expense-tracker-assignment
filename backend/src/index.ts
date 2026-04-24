@@ -16,7 +16,15 @@ export function createApp(dbPath?: string): express.Express {
   );
   app.use(express.json({ limit: "10kb" }));
 
-  app.get("/health", (_req, res) => {
+  app.get("/", (_req, res) => {
+    res.json({
+      status: "working",
+      service: "expense-tracker-api",
+      endpoints: ["/health", "/api/health", "/expenses"],
+    });
+  });
+
+  app.get(["/health", "/api/health"], (_req, res) => {
     res.json({ ok: true });
   });
 
