@@ -1,4 +1,5 @@
 import Database from "better-sqlite3";
+import fs from "fs";
 import path from "path";
 
 export type DB = Database.Database;
@@ -6,6 +7,13 @@ export type DB = Database.Database;
 export function openDb(dbPath?: string): DB {
   const target =
     dbPath ?? process.env.DB_PATH ?? path.join(process.cwd(), "expenses.db");
+
+  // `:memory:` is the sqlite in-memory sentinel — no dir to create.
+  // for file paths, make sure the parent dir exists so the db can be created.
+  if (target !== ":memory:") {
+    const dir = path.dirname(path.resolve(target));
+    fs.mkdirSync(dir, { recursive: true });
+  }
 
   const db = new Database(target);
   db.pragma("journal_mode = WAL");
