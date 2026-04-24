@@ -2,10 +2,12 @@ import express from "express";
 import cors from "cors";
 import { openDb } from "./db";
 import { errorHandler } from "./errors";
+import { expensesRouter } from "./routes/expenses";
 
 export function createApp(dbPath?: string): express.Express {
   const app = express();
   const db = openDb(dbPath);
+  app.locals.db = db;
 
   app.use(
     cors({
@@ -18,8 +20,7 @@ export function createApp(dbPath?: string): express.Express {
     res.json({ ok: true });
   });
 
-  // routes mounted in phase 3
-  app.locals.db = db;
+  app.use(expensesRouter());
 
   app.use(errorHandler);
   return app;
