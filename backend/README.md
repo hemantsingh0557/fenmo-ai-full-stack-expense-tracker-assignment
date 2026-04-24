@@ -14,9 +14,13 @@ Server runs on `http://localhost:4000`.
 
 ## Routes
 
-- `GET  /health` — liveness probe
-- `POST /expenses` — create expense (requires `Idempotency-Key` header)
-- `GET  /expenses?category=Food&sort=date_desc` — list + filter + sort
+Routes are mounted at both the root (matching the assignment spec) and under `/api` (conventional alias):
+
+- `GET  /health`   and  `GET  /api/health`   — liveness probe
+- `POST /expenses` and  `POST /api/expenses` — create expense
+- `GET  /expenses` and  `GET  /api/expenses` — list with optional `category` filter and `sort=date_desc | date_asc`
+
+`POST` accepts an optional `Idempotency-Key` header. When present, the server dedupes retries with the same key; when absent, each call creates a new row. The frontend always sends one.
 
 ## Scripts
 

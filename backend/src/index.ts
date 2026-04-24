@@ -22,15 +22,20 @@ export function createApp(dbPath?: string): express.Express {
     res.json({
       status: "working",
       service: "expense-tracker-api",
-      endpoints: ["/api/health", "/api/expenses"],
+      endpoints: ["/health", "/expenses", "/api/health", "/api/expenses"],
     });
   });
 
-  app.get("/api/health", (_req, res) => {
+  const health: express.RequestHandler = (_req, res) => {
     res.json({ ok: true });
-  });
+  };
+  app.get("/health", health);
+  app.get("/api/health", health);
 
-  app.use("/api", expensesRouter());
+  // assignment spec uses /expenses; /api/expenses is the conventional alias.
+  const router = expensesRouter();
+  app.use(router);
+  app.use("/api", router);
 
   app.use(errorHandler);
   return app;

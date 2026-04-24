@@ -123,6 +123,8 @@ Base URL: whatever `CORS_ORIGIN` points to the backend at. Locally: `http://loca
 
 All responses are JSON. All error responses use the [shape below](#error-shape).
 
+Routes are mounted at **both** the root (matching the assignment spec's `/expenses`) and under `/api` (conventional alias for a JSON API). Either prefix works. Examples below use `/api/...`; `/expenses`, `/health` work identically.
+
 ---
 
 ### `GET /`
@@ -135,13 +137,13 @@ Friendly root — useful for sanity-checking the bare backend URL in a browser.
 {
   "status": "working",
   "service": "expense-tracker-api",
-  "endpoints": ["/api/health", "/api/expenses"]
+  "endpoints": ["/health", "/expenses", "/api/health", "/api/expenses"]
 }
 ```
 
 ---
 
-### `GET /api/health`
+### `GET /health` (also `GET /api/health`)
 
 Liveness probe for the deploy platform.
 
@@ -153,7 +155,7 @@ Liveness probe for the deploy platform.
 
 ---
 
-### `POST /api/expenses`
+### `POST /expenses` (also `POST /api/expenses`)
 
 Create a new expense.
 
@@ -171,7 +173,7 @@ Create a new expense.
 | `amount` | string or number | non-negative, ≤ 2 decimal places. stored as integer paise. |
 | `category` | string (enum) | one of `Food`, `Transport`, `Shopping`, `Bills`, `Health`, `Entertainment`, `Other` |
 | `description` | string (optional) | ≤ 500 chars |
-| `date` | string | `YYYY-MM-DD`, must be a real calendar date |
+| `date` | string | `YYYY-MM-DD`, must be a real calendar date. `2026-02-31` is rejected as a validation error (not silently rolled over to March). |
 
 **Example request**
 
@@ -215,7 +217,7 @@ Money-specific failures return the same shape with `fields.amount`.
 
 ---
 
-### `GET /api/expenses`
+### `GET /expenses` (also `GET /api/expenses`)
 
 List expenses. Supports filtering by category and sorting by date.
 
@@ -358,6 +360,8 @@ Coverage:
 | 6 | Unknown category → 400 | validation |
 | 7 | GET with `?category=` returns filtered items AND filtered total matches | server-computed total stays consistent |
 | 8 | GET sorts newest-first by default | ordering contract |
+| 9 | Rollover date like `2026-02-31` is rejected | calendar validity, not just regex shape |
+| 10 | Both `/expenses` and `/api/expenses` work | spec-path + conventional-prefix compatibility |
 
 ---
 

@@ -26,7 +26,14 @@ export const CreateExpenseFormSchema = z.object({
   description: z.string().max(500).optional().default(""),
   date: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "date is required"),
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "date is required")
+    .refine(
+      (s) => {
+        const d = new Date(s + "T00:00:00Z");
+        return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+      },
+      { message: "not a real calendar date" }
+    ),
 });
 
 export type CreateExpenseFormInput = z.infer<typeof CreateExpenseFormSchema>;

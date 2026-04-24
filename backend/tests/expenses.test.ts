@@ -95,6 +95,52 @@ describe("POST /expenses", () => {
     expect(res.body.error.fields.date).toBeDefined();
   });
 
+  it("rejects a rollover date like 2026-02-31", async () => {
+    const res = await request(app())
+      .post("/api/expenses")
+      .set("Idempotency-Key", "roll-1")
+      .send({
+        amount: "50",
+        category: "Food",
+        description: "",
+        date: "2026-02-31",
+      });
+
+    expect(res.status).toBe(400);
+    expect(res.body.error.fields.date).toBeDefined();
+  });
+
+  it("accepts both /expenses and /api/expenses", async () => {
+    const server = app();
+
+    const a = await request(server)
+      .post("/expenses")
+      .set("Idempotency-Key", "dual-a")
+      .send({
+        amount: "10",
+        category: "Food",
+        description: "root",
+        date: "2026-04-24",
+      });
+    expect(a.status).toBe(201);
+
+    const b = await request(server)
+      .post("/api/expenses")
+      .set("Idempotency-Key", "dual-b")
+      .send({
+        amount: "20",
+        category: "Food",
+        description: "prefixed",
+        date: "2026-04-24",
+      });
+    expect(b.status).toBe(201);
+
+    const fromRoot = await request(server).get("/expenses");
+    const fromApi = await request(server).get("/api/expenses");
+    expect(fromRoot.body.count).toBe(2);
+    expect(fromApi.body.count).toBe(2);
+  });
+
   it("rejects an unknown category", async () => {
     const res = await request(app())
       .post("/api/expenses")

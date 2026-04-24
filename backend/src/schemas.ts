@@ -14,12 +14,17 @@ export type Category = (typeof CATEGORIES)[number];
 
 const amountInput = z.union([z.string(), z.number()]);
 
+// catches rollovers like 2026-02-31 (JS Date silently turns it into 2026-03-03)
 const isoDate = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, "date must be YYYY-MM-DD")
-  .refine((s) => !Number.isNaN(new Date(s + "T00:00:00Z").getTime()), {
-    message: "date is not a real calendar date",
-  });
+  .refine(
+    (s) => {
+      const d = new Date(s + "T00:00:00Z");
+      return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+    },
+    { message: "date is not a real calendar date" }
+  );
 
 export const CreateExpenseSchema = z.object({
   amount: amountInput,
