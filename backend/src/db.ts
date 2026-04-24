@@ -8,11 +8,8 @@ export function openDb(dbPath?: string): DB {
   const target =
     dbPath ?? process.env.DB_PATH ?? path.join(process.cwd(), "expenses.db");
 
-  // `:memory:` is the sqlite in-memory sentinel — no dir to create.
-  // for file paths, make sure the parent dir exists so the db can be created.
   if (target !== ":memory:") {
-    const dir = path.dirname(path.resolve(target));
-    fs.mkdirSync(dir, { recursive: true });
+    fs.mkdirSync(path.dirname(path.resolve(target)), { recursive: true });
   }
 
   const db = new Database(target);

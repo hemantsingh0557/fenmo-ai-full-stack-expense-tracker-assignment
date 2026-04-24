@@ -1,6 +1,4 @@
-// mirror of backend/src/schemas.ts. a shared package would be the real fix;
-// for a timeboxed assignment, duplication + a note is honest.
-
+// mirrors backend/src/schemas.ts — a shared package is the real fix, timeboxed so duplicated.
 import { z } from "zod";
 
 export const CATEGORIES = [

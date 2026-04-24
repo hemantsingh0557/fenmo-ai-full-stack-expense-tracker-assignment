@@ -9,9 +9,6 @@ export function createApp(dbPath?: string): express.Express {
   const db = openDb(dbPath);
   app.locals.db = db;
 
-  // CORS_ORIGIN:
-  //   unset or "*"  -> allow all (good for curl + easy testing)
-  //   "a,b,c"       -> allow-list of origins (split, trim, array)
   const raw = process.env.CORS_ORIGIN?.trim();
   const corsOrigin: string | string[] =
     !raw || raw === "*"

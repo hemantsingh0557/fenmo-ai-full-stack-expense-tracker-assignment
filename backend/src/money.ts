@@ -1,9 +1,4 @@
-// money lives as integer paise in the db. never as a float.
-// 1 rupee = 100 paise.
-//
-// parsing via string split avoids the classic float trap:
-//   1.1 * 100 = 110.00000000000001
-// we refuse to guess; more than 2 decimal places is a user error.
+// integer paise, never floats. 1.1 * 100 === 110.00000000000001 otherwise.
 
 export class MoneyError extends Error {
   constructor(message: string) {

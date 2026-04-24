@@ -9,7 +9,6 @@ import { useCreateExpense } from "../hooks";
 import { ApiError } from "../api";
 
 function todayIso(): string {
-  // local-date, so the default matches what a user sees on their calendar
   const d = new Date();
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -25,9 +24,7 @@ export function ExpenseForm() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [apiError, setApiError] = useState<string | null>(null);
 
-  // idempotency key is generated once per form-mount and reused for any
-  // retries of the *same* submission. after a successful create we rotate
-  // it so the next submit is treated as a new request.
+  // one key per submission attempt; retries reuse it, success rotates it.
   const keyRef = useRef<string>(uuid());
 
   const create = useCreateExpense();

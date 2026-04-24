@@ -12,8 +12,6 @@ export const CATEGORIES = [
 
 export type Category = (typeof CATEGORIES)[number];
 
-// amount comes in as a string (preferred) or number. the route handler
-// runs it through parseAmountToPaise which does the real validation.
 const amountInput = z.union([z.string(), z.number()]);
 
 const isoDate = z

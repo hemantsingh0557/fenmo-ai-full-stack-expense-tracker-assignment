@@ -20,12 +20,10 @@ export function badRequest(
   return new HttpError(400, "bad_request", message, fields);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function errorHandler(
   err: unknown,
   _req: Request,
   res: Response,
-  // express requires 4 args to recognise this as an error handler
   _next: NextFunction
 ): void {
   if (err instanceof ZodError) {

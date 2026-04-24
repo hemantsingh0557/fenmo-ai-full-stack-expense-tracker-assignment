@@ -99,8 +99,7 @@ export function expensesRouter(): Router {
         try {
           runTx();
         } catch (err: unknown) {
-          // race: another request with the same key committed first.
-          // read back the stored response and return it.
+          // concurrent request with same key won — return their stored response
           const code = (err as { code?: string })?.code;
           if (
             idempotencyKey &&
